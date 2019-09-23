@@ -16,7 +16,16 @@ let make = _children => {
     switch (action) {
     | UpdateInput(newInput) =>
       ReasonReact.Update({...state, input: newInput})
-    | Search => ReasonReact.Update({...state, isLoading: true})
+    | Search =>
+      ReasonReact.UpdateWithSideEffects(
+        {...state, isLoading: true},
+        self => {
+          let value = self.state.input;
+          Js.log("value: " ++ value);
+          /* This function needs to return a "unit" type, wo we'll insert it here */
+          ();
+        },
+      )
     },
   render: self =>
     <div
@@ -24,6 +33,7 @@ let make = _children => {
         ~display="flex",
         ~flexDirection="column",
         ~alignItems="center",
+        ~fontFamily="sans-serif",
         (),
       )}>
       <div
@@ -35,9 +45,21 @@ let make = _children => {
           ~justifyContent="space-between",
           (),
         )}>
-        <form>
+        <form
+          onSubmit={ev => {
+            ReactEvent.Form.preventDefault(ev);
+            self.send(Search);
+          }}>
           <label htmlFor="search"> {ReasonReact.string("Search")} </label>
-          <input id="search" name="search " value={self.state.input} />
+          <input
+            id="search"
+            name="search"
+            value={self.state.input}
+            onChange={ev => {
+              let value = ReactEvent.Form.target(ev)##value;
+              self.send(UpdateInput(value));
+            }}
+          />
           <button type_="submit">
             {ReasonReact.string("Submit Search")}
           </button>
