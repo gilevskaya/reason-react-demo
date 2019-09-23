@@ -1,4 +1,4 @@
-# Reason react
+# ReasonReact
 
 ```
 yarn && yarn dev
