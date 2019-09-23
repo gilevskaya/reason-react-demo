@@ -9,7 +9,7 @@ let make = (~name, ~description, ~href, _children) => {
         ~borderRadius="4px",
         ~padding="1rem",
         ~margin="0.5rem",
-        ~minWidth="30rem",
+        ~width="30rem",
         (),
       )}>
       <h3>
